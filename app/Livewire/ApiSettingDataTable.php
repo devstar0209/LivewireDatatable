@@ -28,7 +28,7 @@ class ApiSettingDataTable extends DataTableComponent
 
         $this->setDefaultSort('created_at', 'desc');
     }
-    
+
 
     public function columns(): array
     {
@@ -49,22 +49,22 @@ class ApiSettingDataTable extends DataTableComponent
             Column::make("API URL", "url")
                 ->sortable()
                 ->searchable(),
-            
+
             Column::make("Country", "country")
                 ->sortable()
                 ->searchable(),
             Column::make("Country Code", "country_code")
                 ->sortable()
                 ->searchable(),
-            
-   
+
+
         ];
     }
 
     public function deleteSingleRecord($id){
-        BlacklistDomain::findOrFail($id)->delete();
+        ApiSetting::findOrFail($id)->delete();
         session()->flash('success', 'Record deleted successfully');
 
     }
-    
+
 }
