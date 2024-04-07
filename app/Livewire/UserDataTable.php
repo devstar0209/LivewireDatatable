@@ -28,7 +28,7 @@ class UserDataTable extends DataTableComponent
 
         $this->setDefaultSort('created_at', 'desc');
     }
-    
+
 
     public function columns(): array
     {
@@ -101,13 +101,13 @@ class UserDataTable extends DataTableComponent
                 ->sortable()
                 ->searchable()
                 ->deselected(),
-            
-            
+
+
             Column::make("orig_offer", "orig_offer")
                 ->sortable()
                 ->searchable()
                 ->deselected(),
-            
+
             /*Column::make("Updated at", "updated_at")
                 ->sortable(),*/
 
@@ -150,8 +150,8 @@ class UserDataTable extends DataTableComponent
             }),
     ]),*/
 
-    
-    
+
+
         ];
     }
 
@@ -178,7 +178,7 @@ class UserDataTable extends DataTableComponent
             ->options([
                     2024 => 2024,
                     2023 => 2023,
-                
+
             ]),
     ];*/
 
@@ -227,5 +227,5 @@ class UserDataTable extends DataTableComponent
         session()->flash('success', 'Record deleted successfully');
         //dd($id);
     }
-    
+
 }

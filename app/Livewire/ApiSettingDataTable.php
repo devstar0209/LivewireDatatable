@@ -18,6 +18,9 @@ class ApiSettingDataTable extends DataTableComponent
 {
     protected $model = ApiSetting::class;
 
+    public $selectedUrl;
+    public $editing = [];
+
     public function configure(): void
     {
         $this->setPrimaryKey('id');
@@ -27,8 +30,30 @@ class ApiSettingDataTable extends DataTableComponent
         $this->setPerPage(100);
 
         $this->setDefaultSort('created_at', 'desc');
+
     }
 
+
+    public function updateUrl($id)
+    {
+        $apiSetting = ApiSetting::find($id);
+        $apiSetting->url = $this->selectedUrl;
+        $apiSetting->save();
+
+        $this->editing[$id] = false;
+
+        session()->flash('success', 'URL updated successfully');
+    }
+
+    public function startEditing($rowId)
+    {
+        $this->editing[$rowId] = true;
+    }
+
+    public function cancelEditing($rowId)
+    {
+        $this->editing[$rowId] = false;
+    }
 
     public function columns(): array
     {
@@ -47,9 +72,13 @@ class ApiSettingDataTable extends DataTableComponent
                 ->sortable()
                 ->searchable(),
             Column::make("API URL", "url")
-                ->sortable()
-                ->searchable(),
-
+            ->sortable()
+            ->searchable()
+            ->hideIf(true),
+            Column::make("API URL")
+                ->label(
+                    fn($row, Column $column) => view('components.inline-url-edit')->with(['row' => $row, 'editing' => $this->editing[$row->id] ?? false])
+                ),
             Column::make("Country", "country")
                 ->sortable()
                 ->searchable(),
