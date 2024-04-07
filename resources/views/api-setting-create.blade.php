@@ -1,15 +1,15 @@
 <div>
     {{-- Success is as dangerous as failure. --}}
     <x-slot name="header">
-      
+
       <div class="flex justify-between gap-5 justify-end">
         <div>
-          <h2 class="font-semibold text-xl text-gray-800 leading-tight">            
+          <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             New API Setting
           </h2>
         </div>
       </div>
-        
+
     </x-slot>
 
     <div class="py-12">
@@ -34,7 +34,12 @@
                                 <div class="col-span-full">
                                     <label for="url" class="block text-sm font-medium leading-6 text-gray-900">URL</label>
                                     <div class="mt-2">
-                                        <input type="text" wire:model="url" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" required>
+                                        <select required wire:model="url" id="" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                            <option value="" selected>Select API</option>
+                                            <option value="https://vip.qojyxayv.com/tracker">API1</option>
+                                            <option value="https://cryp.im/api/v1/web/conversion">API2</option>
+                                        </select>
+                                        {{-- <input type="text" wire:model="url" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" required> --}}
                                     </div>
                                     @error('url') <span class="error">{{ $message }}</span> @enderror
                                 </div>
