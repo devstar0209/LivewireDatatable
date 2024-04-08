@@ -124,67 +124,67 @@ if($domain_blacklisted == false){
   $result = $conn->query($sql);
 
 
-  if ($result->num_rows > 0) {
-    // API #2 follows and output data of each row
-    $row = $result->fetch_assoc();
-    $api_url = $row["url"];
+    if ($result->num_rows > 0) {
+        // API #2 follows and output data of each row
+        $row = $result->fetch_assoc();
+        $api_url = $row["url"];
 
-    $URL = $api_url;
+        $URL = $api_url;
 
-    $parsed = parse_url($api_url);
+        $parsed = parse_url($api_url);
 
-    $host = $parsed["host"];
+        $host = $parsed["host"];
 
-    if($host == "cryp.im"){
-        $aff_id = 'empty';
-        $offer_id = 'empty';
-        $orig_offer = 'empty';
-      $apiData = [
-        "flow_hash" => "65bcceeec70ba07734",
-        "landing" => "Swiss Bitcoin ETF",
-        'first_name' => $first_name,
-        'last_name' => $last_name,
-        'email' => $email,
-        'phone' => "+".$phonecc.$phone,
-        "ip" => $user_ip,
-        "sub1" => $aff_sub,
-        "sub2" => $aff_sub2,
-        "sub3" => $aff_sub3,
-        "sub4" => $aff_sub4,
-        "click_id" => $click_id,
-        "user_agent" => $user_agent,
-        "test" => "1"
-      ];
-	  $api_token='glvfvNaLCWpdvNj4GFxfWe87I7GTOQ64JFl54ieTy8PbHoPCQ6ToYgqI52zw';
-	  $query_params = http_build_query([
-			'api_token' => $api_token
-		]);
+        if($host == "cryp.im"){
+            $aff_id = 'empty';
+            $offer_id = 'empty';
+            $orig_offer = 'empty';
+            $apiData = [
+            "flow_hash" => "65bcceeec70ba07734",
+            "landing" => "Swiss Bitcoin ETF",
+            'first_name' => $first_name,
+            'last_name' => $last_name,
+            'email' => $email,
+            'phone' => "+".$phonecc.$phone,
+            "ip" => $user_ip,
+            "sub1" => $aff_sub,
+            "sub2" => $aff_sub2,
+            "sub3" => $aff_sub3,
+            "sub4" => $aff_sub4,
+            "click_id" => $click_id,
+            "user_agent" => $user_agent,
+            "test" => "1"
+        ];
+        $api_token='glvfvNaLCWpdvNj4GFxfWe87I7GTOQ64JFl54ieTy8PbHoPCQ6ToYgqI52zw';
+        $query_params = http_build_query([
+                'api_token' => $api_token
+            ]);
 
-      $json = json_encode($apiData);
+        $json = json_encode($apiData);
 
-      $ch = curl_init($URL. '?' . $query_params);
+        $ch = curl_init($URL. '?' . $query_params);
 
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-      curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-      curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
-      curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-        'Content-Type: application/json',
-        'Content-Length: ' . strlen($json)
-      ));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+            'Content-Length: ' . strlen($json)
+        ));
 
-      $response = curl_exec($ch);
-      $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $response = curl_exec($ch);
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-	  header_remove();
-      http_response_code($code);
+        header_remove();
+        http_response_code($code);
 
-      $sql = "UPDATE user_data SET aff_id = '".$aff_id."', offer_id = '".$offer_id."', orig_offer = '".$orig_offer."' WHERE id=$last_id";
+        $sql = "UPDATE user_data SET aff_id = '".$aff_id."', offer_id = '".$offer_id."', orig_offer = '".$orig_offer."' WHERE id=$last_id";
 
-    if ($conn->query($sql) === TRUE) {
-    //echo "Record updated successfully";
-    } else {
-    //echo "Error updating record: " . $conn->error;
-    }
+        if ($conn->query($sql) === TRUE) {
+        //echo "Record updated successfully";
+        } else {
+        //echo "Error updating record: " . $conn->error;
+        }
 
     }else{
 
@@ -221,7 +221,7 @@ if($domain_blacklisted == false){
         //throw $th;
       }
     }
-}else{
+    }else{
       $apiData = [
         'first_name' => $first_name,
         'last_name' => $last_name,
@@ -253,22 +253,19 @@ if($domain_blacklisted == false){
       http_response_code($code);
     }
 
-}
-else{
+    if(!isJson($response)) {
+        $response = json_encode(['message' => 'Response is a html', 'result' => 'error']);
+        $status = 'error';
+    }
+    if($code == 200){
+        $status = 'success';
+    }
+} else{
   $status = 'blacklist';
   $response = "blacklist_domain";
 }
 
 //Database Entry
-
-if($code == 200){
-    $status = 'success';
-}
-
-if(!isJson($response)) {
-    $response = json_encode(['message' => 'Response is a html', 'result' => 'error']);
-    $status = 'error';
-}
 
 echo $response;
 
