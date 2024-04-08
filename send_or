@@ -41,42 +41,27 @@ $aff_sub4 = $_POST['aff_sub4'] ?? 'empty';
 $aff_id = '22257';
 $offer_id = '1737';
 $orig_offer = '4998';
-$click_id = 'click_id';
 
 $phone = removeCountryCode($_POST['phone']);
 
 $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? 'empty';
 
-$ccodes = array(
-	49 => ['name' => 'Germany', 'code' => 'DE'],
-	423 => ['name' => 'Liechtenstein', 'code' => 'LI'],
-	352 => ['name' => 'Luxembourg', 'code' => 'LU'],
-	43 => ['name' => 'Austria', 'code' => 'AT'],
-	41 => ['name' => 'Switzerland', 'code' => 'CH'],
-);
 
-$country = 'India';
-$countryCode = "";
+
+$country = "India";
 //$log = "$response";
 
 //$country = geoip_country_name_by_name($user_ip);
 
 if (isset($_SERVER["HTTP_CF_IPCOUNTRY"])) {
-  $countryCode = $_SERVER["HTTP_CF_IPCOUNTRY"];
+  $country = $_SERVER["HTTP_CF_IPCOUNTRY"];
 }
-
-if($phonecc !== 'empty') {
-    $phonecc = intval($phonecc);
-	if ($countryCode === '') $countryCode = $ccodes[$phonecc]['code'];
-	$country = $ccodes[$phonecc]['name'];
-}
-
 
 //$log = $response;
 
 //$code = $_COOKIE['cc_'] ?? '';
 
-$code = $countryCode;
+$code = 'cc_';
 
 $status = "";
 
@@ -116,13 +101,11 @@ if (($result->num_rows >= 1)) {
 
 $status = 'error';
 
-
 if($domain_blacklisted == false){
 
-  $sql = "SELECT * FROM api_settings WHERE country_code = '". $countryCode."'";
+  $sql = "SELECT * FROM api_settings WHERE country_code = '". $country."'";
 
   $result = $conn->query($sql);
-
 
   if ($result->num_rows > 0) {
     // API #2 follows and output data of each row
@@ -135,34 +118,27 @@ if($domain_blacklisted == false){
 
     $host = $parsed["host"];
 
-    if($host == "cryp.im"){
-        $aff_id = 'empty';
-        $offer_id = 'empty';
-        $orig_offer = 'empty';
+    if($host == "abc.com"){
       $apiData = [
         "flow_hash" => "65bcceeec70ba07734",
-        "landing" => "Swiss Bitcoin ETF",
+        "landing" => "Bitcoin Era",
         'first_name' => $first_name,
         'last_name' => $last_name,
         'email' => $email,
+        'password' => $password,
         'phone' => "+".$phonecc.$phone,
         "ip" => $user_ip,
         "sub1" => $aff_sub,
         "sub2" => $aff_sub2,
         "sub3" => $aff_sub3,
         "sub4" => $aff_sub4,
-        "click_id" => $click_id,
+        "click_id" => $aff_id,
         "user_agent" => $user_agent,
         "test" => "1"
       ];
-	  $api_token='glvfvNaLCWpdvNj4GFxfWe87I7GTOQ64JFl54ieTy8PbHoPCQ6ToYgqI52zw';
-	  $query_params = http_build_query([
-			'api_token' => $api_token
-		]);
 
       $json = json_encode($apiData);
-
-      $ch = curl_init($URL. '?' . $query_params);
+      $ch = curl_init($URL);
 
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
       curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
@@ -175,51 +151,37 @@ if($domain_blacklisted == false){
       $response = curl_exec($ch);
       $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-	  header_remove();
+      header_remove();
       http_response_code($code);
 
-      $sql = "UPDATE user_data SET aff_id = '".$aff_id."', offer_id = '".$offer_id."', orig_offer = '".$orig_offer."' WHERE id=$last_id";
-
-    if ($conn->query($sql) === TRUE) {
-    //echo "Record updated successfully";
-    } else {
-    //echo "Error updating record: " . $conn->error;
-    }
-
     }else{
-
-        $apiData = [
-            'first_name' => $first_name,
-            'last_name' => $last_name,
-            'email' => $email,
-            'password' => $password,
-            'phonecc' => $phonecc,
-            'phone' => $phone,
-            'user_ip' => $user_ip,
-            'aff_sub' => $aff_sub,
-            'aff_sub2' => $aff_sub2,
-            'aff_sub3' => $aff_sub3,
-            'aff_sub4' => $aff_sub4,
-            'aff_id' => $aff_id,
-            'offer_id' => $offer_id,
-            'orig_offer' => $orig_offer
+      $apiData = [
+        'first_name' => $first_name,
+        'last_name' => $last_name,
+        'email' => $email,
+        'password' => $password,
+        'phonecc' => $phonecc,
+        'phone' => $phone,
+        'user_ip' => $user_ip,
+        'aff_sub' => $aff_sub,
+        'aff_sub2' => $aff_sub2,
+        'aff_sub3' => $aff_sub3,
+        'aff_sub4' => $aff_sub4,
+        'aff_id' => $aff_id,
+        'offer_id' => $offer_id,
+        'orig_offer' => $orig_offer
       ];
 
-      try {
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $URL . '?' . http_build_query($apiData));
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+      $ch = curl_init();
+      curl_setopt($ch, CURLOPT_URL, $URL . '?' . http_build_query($apiData));
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+      curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
-            $response = curl_exec($ch);
-            $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+      $response = curl_exec($ch);
+      $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-            header_remove();
-            http_response_code($code);
-
-      } catch (\Throwable $th) {
-        //throw $th;
-      }
+      header_remove();
+      http_response_code($code);
     }
 }else{
       $apiData = [
@@ -260,17 +222,14 @@ else{
 }
 
 //Database Entry
+echo $response;
+
+
 
 if($code == 200){
     $status = 'success';
 }
 
-if(!isJson($response)) {
-    $response = json_encode(['message' => 'Response is a html', 'result' => 'error']);
-    $status = 'error';
-}
-
-echo $response;
 
 $sql = "UPDATE user_data SET status = '".$status."', log = '".$response."' WHERE id=$last_id";
 
@@ -301,12 +260,4 @@ function removeCountryCode($number) {
     }
 
     return $number;
-}
-
-function isJson($var) {
-    // Attempt to decode the JSON string
-    $decoded = json_decode($var);
-
-    // Check if decoding was successful and the result is not null
-    return $decoded !== null && $decoded !== false;
 }
